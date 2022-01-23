@@ -1,18 +1,20 @@
-var http=require('http');
-var sensor = require("node-dht-sensor");
+const express = require('express');
+const app = express();
+const port = 3000;
+//var sensor = require("node-dht-sensor");
 
-var server=http.createServer(function(request,response)
-    {
-        response.writeHead(200,{"Content-Type":"text/plain"});
+app.use(express.static("public"));
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+})
+
+        /*res.writeHead(200,{"Content-Type":"text/plain"});
         sensor.read(11, 4, function(err, temperature, humidity)
             {
                 if (!err)
                 {
-                    response.end(`temp: ${temperature}°C, humidity: ${humidity}%\n`);
+                    res.end(`temp: ${temperature}°C, humidity: ${humidity}%\n`);
                 }
             }
-        );
-    }
-);
-server.listen(8000);
-console.log("Server running at http://127.0.0.1:8000/");
+        );*/
