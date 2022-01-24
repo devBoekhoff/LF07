@@ -20,3 +20,29 @@ const chartoptions = {
 
 let temperatureChart = new Chart("temperature", chartoptions);
 let humidityChart = new Chart("humidity", chartoptions);
+
+function httpGetAsync(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+
+let currentTemperatureDisplay = document.getElementById("currentTemperature");
+let currentHumidityDisplay = document.getElementById("currentHumidity");
+
+function updateCurrentDisplay(json){
+    let data = JSON.parse(json);
+    currentTemperatureDisplay.innerHTML = data.temperature;
+    currentHumidityDisplay.innerHTML = data.humidity;
+}
+
+function requestUpdateCurrentDisplay(){
+    httpGetAsync("/api/current", updateCurrentDisplay);
+}
+
+window.setInterval(requestUpdateCurrentDisplay, 1000);

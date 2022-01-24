@@ -1,20 +1,25 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-//var sensor = require("node-dht-sensor");
+let sensor;
+if (process.platform == "win32"){
+    sensor = require("./sensor");
+} else {
+    sensor =require("node-dht-sensor");
+}
 
 app.use(express.static("public"));
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-})
+app.get('/api/current', (req, res) =>{
+    let data;
+    sensor.read(11, 4, (err, temperature, humidity) => {
+        if (!err) {
+            data = {temperature: temperature, humidity: humidity};
+        }
+    });
+    return res.json(data);
+});
 
-        /*res.writeHead(200,{"Content-Type":"text/plain"});
-        sensor.read(11, 4, function(err, temperature, humidity)
-            {
-                if (!err)
-                {
-                    res.end(`temp: ${temperature}°C, humidity: ${humidity}%\n`);
-                }
-            }
-        );*/
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+});
