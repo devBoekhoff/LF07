@@ -15,6 +15,9 @@ app.get('/api/current', (req, res) =>{
     sensor.read(11, 4, (err, temperature, humidity) => {
         if (!err) {
             data = {temperature: temperature, humidity: humidity};
+        } else {
+            res.status(500);
+            data = err; 
         }
     });
     return res.json(data);
