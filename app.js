@@ -10,16 +10,10 @@ if (process.platform == "win32"){
 
 app.use(express.static("public"));
 
-app.get('/api/current', (req, res) =>{
-    let data;
-    sensor.read(11, 4, (err, temperature, humidity) => {
-        if (!err) {
-            data = {temperature: temperature, humidity: humidity};
-        } else {
-            res.status(500);
-            data = err; 
-        }
-    });
+app.get('/api/current', async (req, res) =>{
+    let data = await sensor.read(11,4);
+    data.temperature = data.temperature.toFixed(1) + "°C";
+    data.humidity = data.humidity.toFixed(1) + "%";
     return res.json(data);
 });
 
