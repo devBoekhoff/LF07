@@ -4,7 +4,7 @@
   "description": "Hanken PI",
   "main": "app.js",
   "scripts": {
-    "build": "npx tailwindcss -i ./tailwind/input.css -o ./public/styles.css",
+    "build": "npx tailwindcss -i ./input.css -o ./public/styles.css",
     "run": "node app.js"
   },
   "repository": {
