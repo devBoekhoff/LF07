@@ -1,22 +1,23 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-let sensor;
-if (process.platform == "win32"){
-    sensor = require("./sensor");
-} else {
-    sensor =require("node-dht-sensor");
-}
+const repository = require("./modules/repository")
 
 app.use(express.static("public"));
+app.use(express.static("shared"));
 
-app.get('/api/current', async (req, res) =>{
-    let data = await sensor.read(11,4);
-    data.temperature = data.temperature.toFixed(1) + "°C";
-    data.humidity = data.humidity.toFixed(1) + "%";
+app.get('/api/current', (req, res) =>{
+    const data = repository.getLast();
     return res.json(data);
 });
+
+app.get('/api/lastWeek', async (req, res) =>{
+    const data = await repository.getLastWeek();
+    return res.json(data);
+})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
+
+setInterval(repository.save, 5000);

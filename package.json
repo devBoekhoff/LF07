@@ -15,8 +15,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.2",
-    "postcss": "^8.4.5",
-    "node-dht-sensor": "0.4.3"
+    "luxon": "^2.3.0",
+    "node-dht-sensor": "0.4.3",
+    "pg": "^8.7.3",
+    "postcss": "^8.4.5"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.2",

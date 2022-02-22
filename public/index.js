@@ -1,25 +1,65 @@
-const xValues = [50,60,70,80,90,100,110,120,130,140,150];
-const yValues = [7,8,8,9,9,9,10,11,14,14,15];
-const chartoptions = {
+const chartOptions = {
     type: "line",
     data: {
-        labels: xValues,
-        datasets: [{
-            backgroundColor: "rgba(0,0,0,0)",
-            borderColor: "rgba(0,0,0,0.1)",
-            data: yValues
-        }]
+        labels: [],
+        datasets: [
+            {
+                label: "Temperatur",
+                data:[],                
+                borderColor: "rgba(255, 0, 0, 0.5)",
+                backgroundColor: "rgba(255, 0, 0, 0.1)",
+                yAxisID: "y",
+            },
+            {
+                label: "Luftfeuchtigkeit",
+                data:[],                
+                borderColor: "rgba(0, 0, 255, 0.5)",
+                backgroundColor: "rgba(0, 0, 255, 0.1)",
+                yAxisID: "y1",
+            },
+        ],
     },
     options: {
-        legend: {display: false},
+        responsive: true,
+        interaction: {
+            mode: "index",
+            intersect: false,
+        },
+        stacked: false,
         scales: {
-            yAxes: [{ticks: {min: 6, max:16}}],
-        }
-    }
-}
+            x: {
+                type: "time",
+                time: {
+                    tootipFormat: "DD.MM"
+                },
+                ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 7,
+                },
+            },
+            y: {
+                id: "y",
+                type: "linear",
+                display: true,
+                position: "left",
+                min: 0,
+                max: 30,
+            },
+            y1: {
+                id: "y1",
+                type: "linear",
+                display: true,
+                position: "right",
+                min: 0,
+                max: 100,
 
-let temperatureChart = new Chart("temperature", chartoptions);
-let humidityChart = new Chart("humidity", chartoptions);
+                grid: {
+                    drawOnChartArea: false,
+                },
+            },
+        },
+    },
+};
 
 function httpGetAsync(theUrl, callback)
 {
@@ -36,13 +76,36 @@ let currentTemperatureDisplay = document.getElementById("currentTemperature");
 let currentHumidityDisplay = document.getElementById("currentHumidity");
 
 function updateCurrentDisplay(json){
-    let data = JSON.parse(json);
-    currentTemperatureDisplay.innerHTML = data.temperature;
-    currentHumidityDisplay.innerHTML = data.humidity;
+    const data = JSON.parse(json);
+    currentTemperatureDisplay.innerHTML = data.temperature + "°C";
+    currentHumidityDisplay.innerHTML = data.humidity + "%";
 }
 
 function requestUpdateCurrentDisplay(){
     httpGetAsync("/api/current", updateCurrentDisplay);
 }
+
+function updateHistoricalDisplay(json){
+    const data = JSON.parse(json);
+    let temperatureData = [];
+    let humidityData = [];    
+    let dateLabels= [];
+    for(let dataItem of data){
+        temperatureData.push({x: dataItem.time, y: dataItem.temperature});
+        humidityData.push({x: dataItem.time, y: dataItem.humidity});
+        dateLabels.push(dataItem.time);
+    }
+    chartOptions.data.datasets[0].data = temperatureData;
+    chartOptions.data.datasets[1].data = humidityData;
+    chartOptions.data.labels = dateLabels;
+
+    new Chart("historical", chartOptions);
+}
+
+function requestUpdateHistoricalDisplay(){
+    httpGetAsync("/api/lastWeek", updateHistoricalDisplay);
+}
+
+requestUpdateHistoricalDisplay();
 
 window.setInterval(requestUpdateCurrentDisplay, 1000);
