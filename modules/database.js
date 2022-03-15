@@ -1,5 +1,6 @@
 const { SensorData } = require('../shared/sensorData');
-const { Client } = require('pg');
+const { DateTime, FixedOffsetZone } = require("luxon");
+const { Client, types } = require('pg');
 const dbClient = new Client({
     user: 'pi',
     host: 'localhost',
@@ -10,6 +11,8 @@ const dbClient = new Client({
 dbClient.connect();
 
 const table = 'sensor';
+
+types.setTypeParser(1114, str => str);
 
 exports.save = async function (sensorData){
     await dbClient.query(
@@ -41,8 +44,12 @@ exports.getSensorDataForDates = async function (startDate, endDate){
     const sensorData = [];
     for(let row of rows){
         sensorData.push(
-            new SensorData(row.temperature, row.humidity, row.time)
+            new SensorData(
+                row.temperature,
+                row.humidity,
+                DateTime.fromSQL(row.time, {zone: FixedOffsetZone.utcInstance})
+            )
         );
-    }
+    } 
     return sensorData;
 }

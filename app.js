@@ -12,7 +12,7 @@ app.get('/api/current', (req, res) =>{
 });
 
 app.get('/api/lastWeek', async (req, res) =>{
-    const data = await repository.getLastWeek();
+    const data = await repository.getLastDay();
     return res.json(data);
 })
 

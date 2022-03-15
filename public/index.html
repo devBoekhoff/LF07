@@ -15,30 +15,26 @@
 </head>
 
 <body class="w-screen h-screen flex flex-col bg-gray-200">
-    <header class="min-h-min bg-gray-600">
-        <h1 class="m-4 text-xl text-gray-100">
+    <header class="flex flex-row min-h-min text-2xl p-4 gap-2 bg-gray-600 text-gray-100">
+        <img src="./raspberryPiIcon.png" width="32px" height="32px">
+        <p>
             Wetterstation
-        </h1>
+        </p>
     </header>
-    <div class="flex-1 bg-gray-200 text-gray-700 shadow-inner flex flex-row p-4 gap-4 -z-10">
-        <div class="flex flex-col rounded-md shadow-md overflow-hidden">
-            <h1 class="min-h-min p-1 bg-gray-500 text-gray-100">
-                Aktuelle Werte
-            </h1>
-            <div class="p-2">
-                <p>
-                    Temperatur: <span id="currentTemperature" class="font-semibold">no data</span>
-                </p>
-                <p>
-                    Luftfeuchtigkeit: <span id="currentHumidity" class="font-semibold">no data</span>
-                </p>
-            </div>            
-        </div>
-        <div class="flex-1 rounded-md shadow-md overflow-hidden flex flex-col">
-            <h1 class="min-h-min p-1 bg-gray-500 text-gray-100">
-                Historische Werte
-            </h1> 
-        	<canvas id="historical"></canvas>                       
+    <div class="min-h-min flex flex-row text-lg font-semibold bg-gray-400 text-gray-100 pl-4 py-2 gap-4">
+        <p class="font-bold">
+            Aktuell:
+        </p>
+        <p>
+            Temperatur: <span id="currentTemperature">no data</span>
+        </p>
+        <p>
+            Luftfeuchtigkeit: <span id="currentHumidity">no data</span>
+        </p>
+    </div>
+    <div class="flex-1 bg-gray-200 text-gray-700 p-8">
+        <div class="h-full w-full relative">
+            <canvas id="historical"></canvas>                       
         </div>
     </div>
 </body>

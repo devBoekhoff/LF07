@@ -29,21 +29,22 @@ const getLast = function (){
     return cached[cached.length - 1];
 }
 
-const getLastWeek = async function getLastWeek(){
+const getLastDay = async function getLastWeek(){
     const currentDate = DateTime.utc();
-    const oneWeekAgo = DateTime.utc().minus({days: 7}); 
+    const yesterday = DateTime.utc().minus({days: 1}); 
     const result = await handle(
-        database.getSensorDataForDates(oneWeekAgo, currentDate)
+        database.getSensorDataForDates(yesterday, currentDate)
     );
     
     if(!result.error){
         cached = result.data;
     }
+    
     return cached;
 }
 
-getLastWeek();
+getLastDay();
 
 exports.save = save;
 exports.getLast = getLast;
-exports.getLastWeek = getLastWeek;
+exports.getLastDay = getLastDay;

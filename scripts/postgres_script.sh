@@ -9,7 +9,7 @@ pg_lsclusters
 
 sudo -u postgres psql -c "CREATE USER pi WITH PASSWORD 'buddybibi';"
 sudo -u postgres psql -c "ALTER USER pi WITH SUPERUSER; "
-sudo -u postgres psql  -c "ALTER USER pi WITH CREATEROLE;"
+sudo -u postgres psql -c "ALTER USER pi WITH CREATEROLE;"
 sudo -u postgres psql -c "ALTER USER pi WITH CREATEDB;" 
 sudo -u postgres psql -c "CREATE DATABASE app; "
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE app to pi;"

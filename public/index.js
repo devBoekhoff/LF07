@@ -1,3 +1,7 @@
+const SystemZone = luxon.SystemZone;
+const DateTime = luxon.DateTime;
+
+const black = "rgba(0, 0, 0, 1)";
 const chartOptions = {
     type: "line",
     data: {
@@ -5,7 +9,7 @@ const chartOptions = {
         datasets: [
             {
                 label: "Temperatur",
-                data:[],                
+                data:[],        
                 borderColor: "rgba(255, 0, 0, 0.5)",
                 backgroundColor: "rgba(255, 0, 0, 0.1)",
                 yAxisID: "y",
@@ -13,6 +17,7 @@ const chartOptions = {
             {
                 label: "Luftfeuchtigkeit",
                 data:[],                
+                color: black,
                 borderColor: "rgba(0, 0, 255, 0.5)",
                 backgroundColor: "rgba(0, 0, 255, 0.1)",
                 yAxisID: "y1",
@@ -21,6 +26,7 @@ const chartOptions = {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         interaction: {
             mode: "index",
             intersect: false,
@@ -35,6 +41,16 @@ const chartOptions = {
                 ticks: {
                     autoSkip: true,
                     maxTicksLimit: 7,
+                    color: black,
+                    font: {
+                        size: 16,
+                    },
+                    maxRotation: 0,
+                },
+                grid:{
+                    drawOnChartArea: false,
+                    borderColor: black,
+                    color: black,
                 },
             },
             y: {
@@ -44,6 +60,25 @@ const chartOptions = {
                 position: "left",
                 min: 0,
                 max: 30,
+                ticks: {
+                    color: black,
+                    font: {
+                        size: 16,
+                    },
+                },
+                title: {
+                    display: true,
+                    text: "Temperatur in °C",
+                    color: black,
+                    font: {
+                        size: 16,
+                    },
+                },
+                grid: {
+                    drawOnChartArea: false,
+                    borderColor: black,
+                    color: black,
+                },
             },
             y1: {
                 id: "y1",
@@ -52,41 +87,45 @@ const chartOptions = {
                 position: "right",
                 min: 0,
                 max: 100,
-
+                ticks: {
+                    color: black,
+                    font: {
+                        size: 16,
+                    },
+                },
+                title: {
+                    display: true,
+                    text: "relative Luftfeutigkeit in %",
+                    color: black,
+                    font: {
+                        size: 16,
+                    },
+                },
                 grid: {
                     drawOnChartArea: false,
+                    borderColor: black,
+                    color: black,
                 },
             },
         },
     },
 };
 
-function httpGetAsync(theUrl, callback)
-{
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
-    }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-    xmlHttp.send(null);
+async function requestData(uri){
+    return (await fetch("/api/" + uri)).json();
 }
 
 let currentTemperatureDisplay = document.getElementById("currentTemperature");
 let currentHumidityDisplay = document.getElementById("currentHumidity");
 
-function updateCurrentDisplay(json){
-    const data = JSON.parse(json);
+async function updateCurrentDisplay(){
+    const data = await requestData("current");
     currentTemperatureDisplay.innerHTML = data.temperature + "°C";
     currentHumidityDisplay.innerHTML = data.humidity + "%";
 }
 
-function requestUpdateCurrentDisplay(){
-    httpGetAsync("/api/current", updateCurrentDisplay);
-}
-
-function updateHistoricalDisplay(json){
-    const data = JSON.parse(json);
+async function updateHistoricalDisplay(){
+    const data = await requestData("lastWeek");
     let temperatureData = [];
     let humidityData = [];    
     let dateLabels= [];
@@ -102,10 +141,6 @@ function updateHistoricalDisplay(json){
     new Chart("historical", chartOptions);
 }
 
-function requestUpdateHistoricalDisplay(){
-    httpGetAsync("/api/lastWeek", updateHistoricalDisplay);
-}
+updateHistoricalDisplay();
 
-requestUpdateHistoricalDisplay();
-
-window.setInterval(requestUpdateCurrentDisplay, 1000);
+window.setInterval(updateCurrentDisplay, 1000);
