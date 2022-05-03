@@ -29,7 +29,7 @@ const getLast = function (){
     return cached[cached.length - 1];
 }
 
-const getLastDay = async function getLastWeek(){
+const getLastDay = async function getLastDay(){
     const currentDate = DateTime.utc();
     const yesterday = DateTime.utc().minus({days: 1}); 
     const result = await handle(

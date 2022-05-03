@@ -5,7 +5,6 @@ const black = "rgba(0, 0, 0, 1)";
 const chartOptions = {
     type: "line",
     data: {
-        labels: [],
         datasets: [
             {
                 label: "Temperatur",
@@ -25,6 +24,7 @@ const chartOptions = {
         ],
     },
     options: {
+        spanGaps: false,
         responsive: true,
         maintainAspectRatio: false,
         interaction: {
@@ -113,34 +113,70 @@ const chartOptions = {
 
 async function requestData(uri){
     return (await fetch("/api/" + uri)).json();
-}
+} 
 
+let currentTimeDisplay = document.getElementById("currentTime");
 let currentTemperatureDisplay = document.getElementById("currentTemperature");
 let currentHumidityDisplay = document.getElementById("currentHumidity");
+let historicalDisplay = {};
 
-async function updateCurrentDisplay(){
-    const data = await requestData("current");
-    currentTemperatureDisplay.innerHTML = data.temperature + "°C";
-    currentHumidityDisplay.innerHTML = data.humidity + "%";
-}
-
-async function updateHistoricalDisplay(){
-    const data = await requestData("lastWeek");
+async function createHistoricalDisplay(){
+    const data = await requestData("today");
     let temperatureData = [];
     let humidityData = [];    
-    let dateLabels= [];
-    for(let dataItem of data){
-        temperatureData.push({x: dataItem.time, y: dataItem.temperature});
-        humidityData.push({x: dataItem.time, y: dataItem.humidity});
-        dateLabels.push(dataItem.time);
+    
+    let dataItem = data[0];
+    temperatureData.push({x: dataItem.time, y: dataItem.temperature});
+    humidityData.push({x: dataItem.time, y: dataItem.humidity});
+    
+    for(let i = 1; i < data.length; i++){
+        let previousItem = data[i - 1];
+        dataItem = data[i];
+
+        let currentTime = DateTime.fromISO(dataItem.time);
+        let previousTime = DateTime.fromISO(previousItem.time);
+        let diff = currentTime.diff(previousTime);
+        if(diff < 6000){
+            temperatureData.push({x: dataItem.time, y: dataItem.temperature});
+            humidityData.push({x: dataItem.time, y: dataItem.humidity}); 
+        } else {
+            temperatureData.push(null);
+            humidityData.push(null);
+        }
     }
+
     chartOptions.data.datasets[0].data = temperatureData;
     chartOptions.data.datasets[1].data = humidityData;
-    chartOptions.data.labels = dateLabels;
 
-    new Chart("historical", chartOptions);
+    historicalDisplay = new Chart("historical", chartOptions);
 }
 
-updateHistoricalDisplay();
+async function updateDisplays(){
+    const data = await requestData("current");
+    currentTimeDisplay.innerHTML = DateTime.fromISO(data.time).toLocaleString(DateTime.TIME_WITH_SECONDS);
+    currentTemperatureDisplay.innerHTML = data.temperature + "°C";
+    currentHumidityDisplay.innerHTML = data.humidity + "%";
 
-window.setInterval(updateCurrentDisplay, 1000);
+    let recordedTimes = chartOptions.data.datasets[0].data;
+    let lastRecordedTime = recordedTimes[recordedTimes.length - 1].x;
+    if(lastRecordedTime == data.time){
+        return;
+    }
+
+    let currentTime = DateTime.fromISO(data.time);
+    let previousTime = DateTime.fromISO(lastRecordedTime);
+    const diff = currentTime.diff(previousTime);
+    if(diff > 6000){
+        chartOptions.data.datasets[0].data.push(null);
+        chartOptions.data.datasets[1].data.push(null); 
+    }
+
+    chartOptions.data.datasets[0].data.push({x: data.time, y: data.temperature});
+    chartOptions.data.datasets[1].data.push({x: data.time, y: data.humidity});
+
+    historicalDisplay.update();
+}
+
+createHistoricalDisplay();
+
+window.setInterval(updateDisplays, 1000);
