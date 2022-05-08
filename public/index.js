@@ -158,17 +158,20 @@ async function updateDisplays(){
     currentHumidityDisplay.innerHTML = data.humidity + "%";
 
     let recordedTimes = chartOptions.data.datasets[0].data;
-    let lastRecordedTime = recordedTimes[recordedTimes.length - 1].x;
-    if(lastRecordedTime == data.time){
-        return;
-    }
 
-    let currentTime = DateTime.fromISO(data.time);
-    let previousTime = DateTime.fromISO(lastRecordedTime);
-    const diff = currentTime.diff(previousTime);
-    if(diff > 6000){
-        chartOptions.data.datasets[0].data.push(null);
-        chartOptions.data.datasets[1].data.push(null); 
+    if(recordedTimes.length != 0){
+        let lastRecordedTime = recordedTimes[recordedTimes.length - 1].x;
+        if(lastRecordedTime == data.time){
+            return;
+        }
+
+        let currentTime = DateTime.fromISO(data.time);
+        let previousTime = DateTime.fromISO(lastRecordedTime);
+        const diff = currentTime.diff(previousTime);
+        if(diff > 6000){
+            chartOptions.data.datasets[0].data.push(null);
+            chartOptions.data.datasets[1].data.push(null); 
+        }
     }
 
     chartOptions.data.datasets[0].data.push({x: data.time, y: data.temperature});

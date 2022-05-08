@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 80;
 const repository = require("./modules/repository")
 
 app.use(express.static("public"));
