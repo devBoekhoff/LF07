@@ -16,4 +16,4 @@ Im Terminal muss lediglich der Befehl ``npm install`` ausgeführt werden.
 **Nun ist der Server einsatzbereit.**
 ## Ausführung
 Zum Ausführen des Servers muss man diesen mit Nodejs starten.
-Hierfür wird der Befehl ``node app.js`` verwendet. Dabei muss man entweder Projektverzeichnis sein oder ``app.js`` durch den korrekten Pfad ersetzen.
+Hierfür wird der Befehl ``node app.js`` verwendet. Dabei muss man entweder im Projektverzeichnis sein oder ``app.js`` durch den korrekten Pfad ersetzen.
