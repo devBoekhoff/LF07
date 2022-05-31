@@ -29,13 +29,38 @@ async function moveServo(){
     try{
         await servo.open();
     } catch{
-        console.log("couldn't open sensor");
+        console.log("couldn't open servo");
         return;
     }
-    await servo.setDegree(90);
-    await sleep(1000);
-    await servo.open();
-    await servo.setDegree(0);
+
+    try{
+        await servo.setDegree(90);
+    } catch{
+        console.log("couldn't turn servo to 90°");
+        return;
+    }
+
+    try{
+        await sleep(1000);
+    }
+    catch{
+        console.log("couldn't wait");
+        return;
+    }
+    
+    try{
+        await servo.open();
+    } catch{
+        console.log("couldn't open servo");
+        return;
+    }
+    
+    try{
+        await servo.setDegree(90);
+    } catch{
+        console.log("couldn't turn servo to 90°");
+        return;
+    }
 }
 
 setInterval(moveServo, 2000);
