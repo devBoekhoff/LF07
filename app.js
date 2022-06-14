@@ -17,50 +17,30 @@ app.get('/api/today', async (req, res) =>{
     return res.json(data);
 })
 
+const servo = new piServo(22);
+
+app.get('/api/turn0', async (req, res) =>{
+    try {
+        await servo.open();
+        await servo.setDegree(0);
+        return res.json("sucessfully turned to 0°");   
+    } catch (error) {
+        return res.json(error);
+    }
+})
+
+app.get('/api/turn90', async (req, res) =>{
+    try {
+        await servo.open();
+        await servo.setDegree(90);
+        return res.json("sucessfully turned to 90°");   
+    } catch (error) {
+        return res.json(error);
+    }
+})
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
 
 setInterval(repository.save, 5000);
-
-const servo = new piServo(22);
-
-async function moveServo(){
-    try{
-        await servo.open();
-    } catch{
-        console.log("couldn't open servo");
-        return;
-    }
-
-    try{
-        await servo.setDegree(90);
-    } catch{
-        console.log("couldn't turn servo to 90°");
-        return;
-    }
-
-    try{
-        await sleep(1000);
-    }
-    catch{
-        console.log("couldn't wait");
-        return;
-    }
-    
-    try{
-        await servo.open();
-    } catch{
-        console.log("couldn't open servo");
-        return;
-    }
-    
-    try{
-        await servo.setDegree(90);
-    } catch{
-        console.log("couldn't turn servo to 90°");
-        return;
-    }
-}
-
-setInterval(moveServo, 2000);

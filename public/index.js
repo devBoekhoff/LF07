@@ -119,6 +119,18 @@ let currentTimeDisplay = document.getElementById("currentTime");
 let currentTemperatureDisplay = document.getElementById("currentTemperature");
 let currentHumidityDisplay = document.getElementById("currentHumidity");
 let historicalDisplay = {};
+let btnTurnServo0 = document.getElementById("turnServo0Deg");
+let btnTurnServo90 = document.getElementById("turnServo90Deg");
+
+btnTurnServo0.onclick = async function turnServo0Deg(){
+    const data = await requestData("turn0"); 
+    console.log(data);
+};
+
+btnTurnServo90.onclick = async function turnServo90Deg(){
+    const data = await requestData("turn90");
+    console.log();
+};
 
 async function createHistoricalDisplay(){
     const data = await requestData("today");
