@@ -129,7 +129,7 @@ btnTurnServo0.onclick = async function turnServo0Deg(){
 
 btnTurnServo90.onclick = async function turnServo90Deg(){
     const data = await requestData("turn90");
-    console.log();
+    console.log(data);
 };
 
 async function createHistoricalDisplay(){
